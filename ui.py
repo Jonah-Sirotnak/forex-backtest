@@ -34,7 +34,7 @@ if run_backtest:
 
         # Load + preprocess
         # loader = DataLoaderYF(symbol, str(start_date), str(end_date), interval)
-        loader = DataLoaderTW("../data/tradingview_CMC_EURUSD.csv", time_col="time")
+        loader = DataLoaderTW("tradingview_CMC_EURUSD.csv", time_col="time")
         df = loader.get_data()
         print(f"Data loaded: {len(df)} rows")
         ind = IndicatorCalculator(short_ema, long_ema)
