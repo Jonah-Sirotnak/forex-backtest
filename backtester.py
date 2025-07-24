@@ -1,12 +1,14 @@
 import pandas as pd
+from risk_manager import RiskManager
+from position_sizer import PositionSizer
 
 class Backtester:
-    def __init__(self, df: pd.DataFrame, initial_capital=100000, skid=1.0, stop_loss_pct=0.25, position_size=0.01):
+    def __init__(self, df: pd.DataFrame, initial_capital=100000, skid=1.0, risk_manager: RiskManager=None, position_sizer: PositionSizer=None):
         self.df = df.copy()
         self.initial_capital = initial_capital
         self.skid = skid
-        self.stop_loss_pct = stop_loss_pct
-        self.position_size = position_size
+        self.risk_manager = risk_manager
+        self.position_sizer = position_sizer
 
     def run_backtest(self):
         df = self.df
@@ -36,9 +38,9 @@ class Backtester:
                 entry_price = next_open + self.skid * abs(next_high - next_open)
 
                 capital = df.iloc[i]['Equity']
-                allocated = capital * self.position_size
+                allocated = self.position_sizer.calculate(entry_price, capital)
                 position_size = allocated / entry_price
-                stop_price = entry_price * (1 - self.stop_loss_pct)
+                stop_price = self.risk_manager.get_stop_price(entry_price)
 
                 entry_index = i + 1
                 df.at[df.index[entry_index], 'Trade Entry Price'] = entry_price
@@ -49,9 +51,13 @@ class Backtester:
 
             elif in_position:
                 current_low = df.iloc[i]['Low']
+                current_high = df.iloc[i]['High']
                 
+                if self.risk_manager.get_stop_loss_type() == 'trailing':
+                    stop_price = self.risk_manager.update_trailing_stop(stop_price, current_high)
+
                 # Check for stop-loss
-                if current_low <= stop_price:
+                if self.risk_manager.check_stop(current_low, stop_price):
                     exit_price = stop_price
                     trade_return = (exit_price - entry_price) / entry_price
                     profit = trade_return * position_size * entry_price
