@@ -31,8 +31,14 @@ class TradeLog:
                 trades.at[exit_time, 'Entry Index'] = entry_index
                 trades.at[exit_time, 'Exit Index'] = exit_index
 
-                trades.at[exit_time, 'Trade Entry Price'] = entry_row['Trade Entry Price'].values[0]
+                entry_price = entry_row['Trade Entry Price'].values[0]
+                trades.at[exit_time, 'Trade Entry Price'] = entry_price
                 trades.at[exit_time, 'Position Size'] = entry_row['Position Size'].values[0]
+
+                lows_during_trade = df.iloc[entry_index:exit_index+1]['Low']
+                min_low = lows_during_trade.min()
+                drawdown_pct = ((min_low - entry_price) / entry_price) * 100
+                trades.at[exit_time, 'Max Drawdown (%)'] = drawdown_pct
 
         # Duration and R multiple
         trades['Duration (days)'] = trades['Exit Index'] - trades['Entry Index']
@@ -49,5 +55,6 @@ class TradeLog:
             'R Multiple',
             'Position Size',
             'Equity',
+            'Max Drawdown (%)',
             'Duration (days)'
         ]]

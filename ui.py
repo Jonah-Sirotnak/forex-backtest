@@ -34,13 +34,16 @@ if run_backtest:
 
         # Load + preprocess
         # loader = DataLoaderYF(symbol, str(start_date), str(end_date), interval)
-        loader = DataLoaderTW("tradingview_CMC_EURUSD.csv", time_col="time")
+        loader = DataLoaderTW("../data/tradingview_CMC_EURUSD.csv", time_col="time")
         df = loader.get_data()
         print(f"Data loaded: {len(df)} rows")
         ind = IndicatorCalculator(short_ema, long_ema)
         df = ind.apply_ema_crossover(df)
 
-        bt = Backtester(df, initial_capital=capital, skid=skid, stop_loss_pct=stop_loss_pct, position_size=position_pct)
+        sizer = PositionSizer(initial_capital=capital, position_pct=position_pct, skid=skid)
+        df = sizer.apply(df)
+
+        bt = Backtester(df, initial_capital=capital, skid=skid, stop_loss_pct=stop_loss_pct)
         results = bt.run_backtest()
 
         stats = PerformanceStats(results).compute()
