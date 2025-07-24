@@ -9,8 +9,8 @@ class IndicatorCalculator:
         df = df.copy()
 
         # Calculate EMAs
-        df['EMA_Short'] = df['Close'].ewm(span=self.short_period, adjust=False).mean()
-        df['EMA_Long'] = df['Close'].ewm(span=self.long_period, adjust=False).mean()
+        df['EMA_Short'] = df['Close'].iloc[self.short_period:].ewm(span=self.short_period, adjust=False).mean()
+        df['EMA_Long'] = df['Close'].iloc[self.long_period:].ewm(span=self.long_period, adjust=False).mean()
 
         # Generate signals
         df['Signal'] = 0
