@@ -43,7 +43,6 @@ if run_backtest:
         df = ind.apply_ema_crossover(df)
 
         sizer = PositionSizer(position_pct=position_pct)
-        df = sizer.apply(df)
 
         risk_manager = RiskManager(stop_loss_pct=stop_loss_pct, stop_loss_type=stop_loss_type)
         bt = Backtester(df, initial_capital=capital, skid=skid, risk_manager=risk_manager, position_sizer=sizer)
