@@ -1,5 +1,5 @@
 import streamlit as st
-from data_loader import DataLoaderYF
+# from data_loader import DataLoaderYF
 from data_loader import DataLoaderTW
 from indicators import IndicatorCalculator
 from position_sizer import PositionSizer
