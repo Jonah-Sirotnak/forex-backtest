@@ -42,7 +42,7 @@ if run_backtest:
         ind = IndicatorCalculator(short_ema, long_ema)
         df = ind.apply_ema_crossover(df)
 
-        sizer = PositionSizer(initial_capital=capital, position_pct=position_pct)
+        sizer = PositionSizer(position_pct=position_pct)
         df = sizer.apply(df)
 
         risk_manager = RiskManager(stop_loss_pct=stop_loss_pct, stop_loss_type=stop_loss_type)
