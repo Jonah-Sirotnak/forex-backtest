@@ -49,8 +49,6 @@ if run_backtest:
 
         results = bt.run_backtest()
 
-
-
         stats = PerformanceStats(results).compute()
 
         # Show stats
