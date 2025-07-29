@@ -65,6 +65,9 @@ class DataLoaderTW:
         # Convert UNIX timestamp to datetime
         df[self.time_col] = pd.to_datetime(df[self.time_col], unit='s')
 
+        # Add 7 hours to simulate UTC+7 (Vietnam time)
+        df[self.time_col] = df[self.time_col] + pd.Timedelta(hours=7)
+
         # Standardize column names to match Yahoo Finance format
         df.rename(columns={
             'open': 'Open',
